@@ -12,3 +12,16 @@ type Product struct {
 	CreatedAt 	time.Time 	`json:"-"`
 	UpdatedAt 	time.Time 	`json:"-"`
 }
+
+type ProductResponse struct {
+	ID		int		`json: "id"`
+	Title	string	`json: "title"`
+	Price	int		`json: "price"`
+	Image	string	`json: "image"`
+	Desc	string	`json: "desc"`
+	Stock	int		`json: "stock"`
+}
+
+func (ProductResponse) TableName() string {
+	return "products"
+}

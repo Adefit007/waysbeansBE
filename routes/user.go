@@ -2,6 +2,7 @@ package routes
 
 import (
 	"waysbeans/handlers"
+	"waysbeans/pkg/middleware"
 	"waysbeans/pkg/mysql"
 	"waysbeans/repositories"
 
@@ -13,7 +14,7 @@ func UserRoutes(r *mux.Router) {
 	h := handlers.HandlerUser(UserReposity)
 
 	r.HandleFunc("/users", h.FindUsers).Methods("GET")
-	r.HandleFunc("/user/{id}", h.GetUser).Methods("GET")
+	r.HandleFunc("/user-profile",middleware.Auth(h.GetUser)).Methods("GET")
 	r.HandleFunc("/user", h.CreateUser).Methods("POST")
 	r.HandleFunc("/user/{id}", h.UpdateUser).Methods("PATCH")
 	r.HandleFunc("/user/{id}", h.DeleteUser).Methods("DELETE")
