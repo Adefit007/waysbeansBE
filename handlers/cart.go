@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"os"
 	"strconv"
 	cartdto "waysbeans/dto/cart.go"
 	dto "waysbeans/dto/result"
@@ -208,9 +209,9 @@ func (h *handlersCart) FindCartsByID(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(response)
 	}
 
-	// for i, p := range cart {
-	// 	cart[i].Product.Image = os.Getenv("PATH_FILE") + p.Product.Image
-	// }
+	for i, p := range cart {
+		cart[i].Product.Image = os.Getenv("PATH_FILE") + p.Product.Image
+	}
 
 	w.WriteHeader(http.StatusOK)
 	response := dto.SuccessResult{Code: http.StatusOK, Data: cart}
