@@ -135,7 +135,18 @@ func (h *handlersProduct) UpdateProduct(w http.ResponseWriter, r *http.Request) 
 	w.Header().Set("Content-Type","application/json")
 
 	dataContex := r.Context().Value("dataFile") // add this code
-	filename := dataContex.(string)          // add this code
+	filepath := dataContex.(string)  
+	
+	var ctx = context.Background()
+	var CLOUD_NAME = os.Getenv("CLOUD_NAME")
+	var API_KEY = os.Getenv("API_KEY")
+	var API_SECRET = os.Getenv("API_SECRET")
+
+	// Add your Cloudinary credentials ...
+	cld, _ := cloudinary.NewFromParams(CLOUD_NAME, API_KEY, API_SECRET)
+
+	// Upload file to Cloudinary ...
+	resp, _ := cld.Upload.Upload(ctx, filepath, uploader.UploadParams{Folder: "waybeans"});// add this code
 
 	price, _ := strconv.Atoi(r.FormValue("price"))
 	stock, _ := strconv.Atoi(r.FormValue("stock"))
@@ -143,7 +154,7 @@ func (h *handlersProduct) UpdateProduct(w http.ResponseWriter, r *http.Request) 
 	request := productsdto.UpdateProduct{
 		Title: r.FormValue("title"),
 		Price: price,
-		Image: filename,
+		Image: resp.SecureURL,
 		Stock: stock,
 		Desc:	r.FormValue("desc"),
 	}
@@ -173,7 +184,7 @@ func (h *handlersProduct) UpdateProduct(w http.ResponseWriter, r *http.Request) 
 		product.Price =request.Price
 	}
 
-	if filename != "false" {
+	if filepath != "false" {
 		product.Image = request.Image
 	}
 
