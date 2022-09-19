@@ -80,7 +80,7 @@ func (h *handlersProduct) CreateProduct(w http.ResponseWriter, r *http.Request) 
 		Title : r.FormValue("title"),
 		Price: price,
 		Stock: stock,
-		Image: filepath,
+		// Image: filepath,
 		Desc: r.FormValue("desc"),
 	}
 
@@ -144,7 +144,10 @@ func (h *handlersProduct) UpdateProduct(w http.ResponseWriter, r *http.Request) 
 	cld, _ := cloudinary.NewFromParams(CLOUD_NAME, API_KEY, API_SECRET)
 
 	// Upload file to Cloudinary ...
-	resp, _ := cld.Upload.Upload(ctx, filepath, uploader.UploadParams{Folder: "waybeans"});// add this code
+	resp, err := cld.Upload.Upload(ctx, filepath, uploader.UploadParams{Folder: "waybeans"});// add this code
+	if err != nil {
+		fmt.Println(err.Error())
+	}
 
 	price, _ := strconv.Atoi(r.FormValue("price"))
 	stock, _ := strconv.Atoi(r.FormValue("stock"))
@@ -155,15 +158,6 @@ func (h *handlersProduct) UpdateProduct(w http.ResponseWriter, r *http.Request) 
 		Image: resp.SecureURL,
 		Stock: stock,
 		Desc:	r.FormValue("desc"),
-	}
-
-	validation := validator.New()
-	err := validation.Struct(request)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		response := dto.ErrorResult{Code: http.StatusInternalServerError,Message: err.Error()}
-		json.NewEncoder(w).Encode(response)
-		return
 	}
 
 	id, _ := strconv.Atoi(mux.Vars(r)["id"])
